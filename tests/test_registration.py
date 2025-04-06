@@ -44,3 +44,31 @@ def test_add_new_user(setup_database, connection):
 Тест аутентификации пользователя с неправильным паролем.
 Тест отображения списка пользователей.
 """
+def test_authenticate_user(setup_database, connection):
+    """Тест успешной аутентификации пользователя."""
+    add_user('testuser', 'testuser@example.com', 'password123')
+    assert authenticate_user('testuser', 'password123'), "Пользователь должен быть аутентифицирован."
+
+
+def test_authenticate_user_wrong_password(setup_database, connection):
+    """Тест аутентификации пользователя с неправильным паролем."""
+    add_user('testuser', 'testuser@example.com', 'password123')
+    assert not authenticate_user('testuser', 'wrong_password'), "Аутентификация должна завершиться неудачей."
+
+
+
+def test_authenticate_nonexistent_user(setup_database, connection):
+    """Тест аутентификации несуществующего пользователя."""
+    assert not authenticate_user('nonexistent_user', 'password'), "Аутентификация должна завершиться неудачей."
+
+
+
+
+
+def test_display_users(setup_database, connection, capsys): 
+    add_user('testuser1', 'testuser1@example.com', 'password123')
+    add_user('testuser2', 'testuser2@example.com', 'password456')
+    display_users()
+    captured = capsys.readouterr()
+    assert "testuser1" in captured.out
+    assert "testuser2" in captured.out
